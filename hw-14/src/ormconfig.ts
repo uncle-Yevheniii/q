@@ -4,11 +4,11 @@ import { User } from './user/User.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'yevheniii',
-  password: 'qwerty12345',
-  database: 'nest_exhibitblog',
+  host: process.env.DB_HOST || 'localhost',
+  port: Number(process.env.DB_PORT) || 5432,
+  username: process.env.DB_USERNAME || 'yevheniii',
+  password: process.env.DB_PASSWORD || 'qwerty12345',
+  database: process.env.DB_NAME || 'nest_exhibitblog',
   synchronize: false,
   logging: true,
 

@@ -1,9 +1,11 @@
-import { ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
+  dotenv.config();
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
@@ -25,6 +27,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, () => {
+    console.log(`Server running on http://localhost:${process.env.PORT || 3000}`);
+  });
 }
 bootstrap();
