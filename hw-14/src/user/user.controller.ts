@@ -1,4 +1,12 @@
-import { Body, Controller, Get, NotFoundException, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { UserCreateDto, UserQueryDTO } from './dto';
@@ -18,7 +26,7 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'Not found user' })
   async getUser(@Query() userQuery: UserQueryDTO) {
     if (!userQuery.id && !userQuery.username)
-      throw new NotFoundException('You must provide either id or username');
+      throw new BadRequestException('You must provide either id or username');
 
     const user = userQuery?.id
       ? await this.userService.getUserById(userQuery?.id)
@@ -28,14 +36,27 @@ export class UserController {
     return plainToInstance(User, user, { excludeExtraneousValues: true });
   }
 
-  @Post('/create')
-  @ApiOperation({ summary: 'Create user' })
-  // @ApiBody()
-  @ApiResponse({ status: 201, description: 'User created' })
+  @Post('/signup')
+  @ApiOperation({ summary: 'Sign up user' })
+  @ApiResponse({ status: 201, description: 'Sign up user successful' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  async createUser(@Body() data: UserCreateDto) {
+  async signupUser(@Body() data: UserCreateDto) {
     const user = await this.userService.createUser(data);
 
     return plainToInstance(User, user, { excludeExtraneousValues: true });
+  }
+
+  @Post('/login')
+  @ApiOperation({ summary: 'Log in user' })
+  @ApiResponse({ status: 201, description: 'Log in user successful' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'Not found user' })
+  async loginUser(@Body() data: UserCreateDto) {
+    const user = await this.userService.authenticateUser(data);
+
+    return plainToInstance(User, user, {
+      excludeExtraneousValues: true,
+      groups: ['includeAccessToken'],
+    });
   }
 }

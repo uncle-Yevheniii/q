@@ -4,8 +4,8 @@ import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
 export class UserCreateDto {
   @ApiProperty({ example: 'username', description: 'Enter username' })
   @IsString()
-  @MinLength(3, { message: 'Name is too short' })
-  @MaxLength(50, { message: 'Name is too long' })
+  @MinLength(3, { message: 'Username is too short' })
+  @MaxLength(50, { message: 'Username is too long' })
   username: string;
 
   @ApiProperty({ example: 'password', description: 'Enter password' })
