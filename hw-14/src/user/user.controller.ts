@@ -6,12 +6,16 @@ import {
   NotFoundException,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { UserCreateDto, UserQueryDTO } from './dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from './User.entity';
+import { JwtGuard } from './strategy/jwt.guard';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -55,6 +59,22 @@ export class UserController {
     const user = await this.userService.authenticateUser(data);
 
     return plainToInstance(User, user, {
+      excludeExtraneousValues: true,
+      groups: ['includeAccessToken'],
+    });
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access - token')
+  @ApiOperation({ summary: 'Get information about the current user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the information about the current user',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @Get('/me')
+  async getMe(@Req() req: Request) {
+    return plainToInstance(User, req.user, {
       excludeExtraneousValues: true,
       groups: ['includeAccessToken'],
     });
