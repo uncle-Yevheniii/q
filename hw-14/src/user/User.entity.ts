@@ -1,7 +1,8 @@
-import { Expose } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
+import { Exhibit } from '../exhibit/Exhibit.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('user')
 export class User {
   @Expose()
   @PrimaryGeneratedColumn()
@@ -11,9 +12,11 @@ export class User {
   @Column({ unique: true })
   username: string;
 
+  @Exclude()
   @Column()
   password: string;
 
+  @Exclude()
   @Expose({ groups: ['includeAccessToken'] })
   @Column({ default: '' })
   access_token?: string;
@@ -21,4 +24,7 @@ export class User {
   @Expose()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToMany(() => Exhibit, (exhibit) => exhibit.userInfo, { cascade: true })
+  exhibit: Array<Exhibit>;
 }

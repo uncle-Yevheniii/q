@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { UserCreateDto, UserQueryDTO } from './dto';
+import { UserCreateDto, UserQueryDto } from './dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from './User.entity';
 import { JwtGuard } from './strategy/jwt.guard';
@@ -28,7 +28,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Return user' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 404, description: 'Not found user' })
-  async getUser(@Query() userQuery: UserQueryDTO) {
+  async getUser(@Query() userQuery: UserQueryDto) {
     if (!userQuery.id && !userQuery.username)
       throw new BadRequestException('You must provide either id or username');
 
