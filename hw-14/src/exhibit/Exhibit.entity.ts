@@ -1,5 +1,5 @@
 import { User } from '../user/User.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('exhibit')
 export class Exhibit {
@@ -15,6 +15,10 @@ export class Exhibit {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.exhibit, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.exhibit, { eager: true })
+  @JoinColumn({ name: 'userID' })
   userInfo: User;
+
+  @Column()
+  userID: number;
 }

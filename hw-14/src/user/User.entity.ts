@@ -16,11 +16,6 @@ export class User {
   @Column()
   password: string;
 
-  @Exclude()
-  @Expose({ groups: ['includeAccessToken'] })
-  @Column({ default: '' })
-  access_token?: string;
-
   @Expose()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

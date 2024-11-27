@@ -6,6 +6,8 @@ import { User } from './user/User.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ExhibitModule } from './exhibit/exhibit.module';
 import { Exhibit } from './exhibit/Exhibit.entity';
+import { AuthModule } from './auth/auth.module';
+import { JwtStrategy } from './auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -24,10 +26,11 @@ import { Exhibit } from './exhibit/Exhibit.entity';
         synchronize: false,
       }),
     }),
+    AuthModule,
     UserModule,
     ExhibitModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [JwtStrategy],
 })
 export class AppModule {}

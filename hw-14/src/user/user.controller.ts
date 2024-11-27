@@ -1,23 +1,20 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   Get,
   NotFoundException,
-  Param,
-  Post,
-  Put,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { UserCreateDto, UserParamsDto, UserUpdateDto } from './dto';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { UserParamsDto } from './dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from './User.entity';
-import { JwtGuard } from './strategy/jwt.guard';
+// import { JwtGuard } from './strategy/jwt.guard';
 import { Request } from 'express';
+import { JwtGuard } from '../auth/strategy/jwt.guard';
 
 @Controller('user')
 export class UserController {
@@ -40,30 +37,6 @@ export class UserController {
     if (!user) throw new NotFoundException('User not found');
 
     return plainToInstance(User, user, { excludeExtraneousValues: true });
-  }
-
-  @Post('/signup')
-  @ApiOperation({ summary: 'Sign up user' })
-  @ApiResponse({ status: 201, description: 'Sign up user successful' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  async signupUser(@Body() data: UserCreateDto) {
-    const user = await this.userService.createUser(data);
-
-    return plainToInstance(User, user, { excludeExtraneousValues: true });
-  }
-
-  @Post('/login')
-  @ApiOperation({ summary: 'Log in user' })
-  @ApiResponse({ status: 201, description: 'Log in user successful' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 404, description: 'Not found user' })
-  async loginUser(@Body() data: UserCreateDto) {
-    const user = await this.userService.authenticateUser(data);
-
-    return plainToInstance(User, user, {
-      excludeExtraneousValues: true,
-      groups: ['includeAccessToken'],
-    });
   }
 
   @UseGuards(JwtGuard)
