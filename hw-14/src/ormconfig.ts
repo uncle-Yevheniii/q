@@ -18,3 +18,4 @@ export const AppDataSource = new DataSource({
 });
 
 // npm run migration:generate -- ./src/migrations/MigrationName -d ./src/ormconfig.ts
+// npm run migration:run

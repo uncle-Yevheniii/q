@@ -1,18 +1,24 @@
-export class UserInfoDto {
-  id: number;
-  username: string;
-}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
-export class ExhibitDto {
-  id: number;
-  title: string;
-  artist: string;
+export class ExhibitBodyDto {
+  @ApiProperty({ description: 'Exhibit description' })
+  @IsString()
+  @MinLength(6)
+  @MaxLength(512)
   description: string;
-  createdAt: string;
-  userInfo: UserInfoDto;
 }
 
-export class ExhibitResponseDto {
-  data: ExhibitDto[];
-  total: number;
+export class ExhibitCreateDto {
+  @IsString()
+  userID: number;
+
+  @IsString()
+  imagePublicId: string;
+
+  @IsString()
+  imageUrl: string;
+
+  @IsString()
+  description: string;
 }
