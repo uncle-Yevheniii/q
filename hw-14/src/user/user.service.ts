@@ -2,9 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from './User.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserCreateDto } from './dto/userCreate.dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { UserUpdateDto, UserCreateDto } from './dto';
 
 @Injectable()
 export class UserService {

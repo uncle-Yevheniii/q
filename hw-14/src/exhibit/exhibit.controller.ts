@@ -1,8 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ExhibitService } from './exhibit.service';
 import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { ExhibitResponseDto } from './dto/exhibit.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('exhibit')
 export class ExhibitController {
@@ -18,5 +19,25 @@ export class ExhibitController {
     const exhibit = await this.exhibitService.getExhibits(exhibitQuery);
 
     return exhibit;
+  }
+
+  @Post('/')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+        description: { type: 'string' },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('description') description: string,
+  ) {
+    console.log(file);
+    console.log(description);
   }
 }

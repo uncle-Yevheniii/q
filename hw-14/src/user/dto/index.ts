@@ -1,3 +1,4 @@
 export * from './userCreate.dto';
-export * from './userQuery.dto';
+export * from './userUpdate.dto';
+export * from './userParamsDto.dto';
 export * from './jwtPayload.dto';
