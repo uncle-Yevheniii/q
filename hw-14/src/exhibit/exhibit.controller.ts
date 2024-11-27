@@ -49,7 +49,7 @@ export class ExhibitController {
     return { data: transformedData, total };
   }
 
-  @Get('/:id')
+  @Get('/post/:id')
   @ApiOperation({ summary: 'Get exhibit by id' })
   @ApiParam({ name: 'id', required: true, type: Number })
   @ApiResponse({ status: 200, description: 'Return exhibit' })
@@ -90,6 +90,8 @@ export class ExhibitController {
     if (!file) throw new BadRequestException('File is required');
 
     const user = req.user;
+    if (!user) throw new BadRequestException('Unauthorized');
+
     const cloudPhoto = await this.exhibitService.uploadImageBuffer(file.buffer, file.fieldname);
 
     const exhibit = await this.exhibitService.createExhibit({
@@ -99,5 +101,24 @@ export class ExhibitController {
       description: data.description,
     });
     return plainToInstance(Exhibit, exhibit, { excludeExtraneousValues: true });
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access - token')
+  @ApiOperation({ summary: 'Get all exhibit authorized user with query params' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return exhibit list' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @Get('/my')
+  async getMyExhibits(@Query() exhibitQuery: ExhibitQueryDto, @Req() req: Request) {
+    const user = req.user;
+    if (!user) throw new BadRequestException('Unauthorized');
+
+    const { data, total } = await this.exhibitService.getExhibitByUserId(exhibitQuery, user['id']);
+    const transformedData = plainToInstance(Exhibit, data, { excludeExtraneousValues: true });
+
+    return { data: transformedData, total };
   }
 }
