@@ -3,12 +3,14 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  NotFoundException,
 } from '@nestjs/common';
 import { ExhibitService } from './exhibit.service';
 import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
@@ -17,6 +19,7 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
@@ -27,6 +30,7 @@ import { JwtGuard } from '../auth/strategy/jwt.guard';
 import { plainToInstance } from 'class-transformer';
 import { Exhibit } from './Exhibit.entity';
 import { ExhibitBodyDto } from './dto/exhibit.dto';
+import { ExhibitParamDto } from './dto/exhibitParam.dto';
 
 @Controller('exhibit')
 export class ExhibitController {
@@ -45,9 +49,28 @@ export class ExhibitController {
     return { data: transformedData, total };
   }
 
+  @Get('/:id')
+  @ApiOperation({ summary: 'Get exhibit by id' })
+  @ApiParam({ name: 'id', required: true, type: Number })
+  @ApiResponse({ status: 200, description: 'Return exhibit' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'Exhibit not found' })
+  async getExhibitById(@Param() parm: ExhibitParamDto) {
+    if (!parm.id) throw new BadRequestException('You must provide either id');
+
+    const exhibit = await this.exhibitService.getExhibitById(parm.id);
+    if (!exhibit) throw new NotFoundException('Exhibit not found');
+
+    return plainToInstance(Exhibit, exhibit, { excludeExtraneousValues: true });
+  }
+
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access - token')
   @Post('/')
+  @ApiOperation({ summary: 'Create exhibit post' })
+  @ApiResponse({ status: 201, description: 'Return created exhibit' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

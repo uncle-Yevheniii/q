@@ -12,7 +12,6 @@ export class Exhibit {
   @Column()
   imageUrl: string;
 
-  @Expose() //? maybe need to remove
   @Column()
   imagePublicId: string;
 

@@ -65,4 +65,8 @@ export class ExhibitService {
 
     return exhibit;
   }
+
+  async getExhibitById(id: number) {
+    return await this.exhibitRepository.findOne({ where: { id } });
+  }
 }

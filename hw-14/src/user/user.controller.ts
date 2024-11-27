@@ -12,7 +12,6 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swag
 import { UserParamsDto } from './dto';
 import { plainToInstance } from 'class-transformer';
 import { User } from './User.entity';
-// import { JwtGuard } from './strategy/jwt.guard';
 import { Request } from 'express';
 import { JwtGuard } from '../auth/strategy/jwt.guard';
 
