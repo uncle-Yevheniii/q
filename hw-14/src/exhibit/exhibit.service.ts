@@ -3,7 +3,7 @@ import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
 import { ExhibitCreateDto } from './dto/exhibit.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Exhibit } from './Exhibit.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,8 +33,12 @@ export class ExhibitService {
     return { data, total };
   }
 
-  async uploadImageBuffer(fileBuffer: Buffer, fileName: string): Promise<UploadApiResponse> {
-    const uniqueFilename = `${uuidv4()}/${fileName}`;
+  async uploadImageBuffer(
+    fileBuffer: Buffer,
+    fileName: string,
+    id: number,
+  ): Promise<UploadApiResponse> {
+    const uniqueFilename = `${uuidv4()}/${id}/${fileName.split('.')[0]}`;
 
     const updatedBuffer = await sharp(fileBuffer)
       .resize({
@@ -79,5 +83,13 @@ export class ExhibitService {
       order: { createdAt: 'DESC' },
     });
     return { data, total };
+  }
+
+  async deleteExhibitById(exhibit: Exhibit) {
+    const cloudPhotoDelete = await cloudinary.uploader.destroy(exhibit.imagePublicId);
+    if (cloudPhotoDelete['result'] !== 'ok')
+      throw new InternalServerErrorException('Failed to delete image from Cloudinary'); //? need drop error message
+
+    await this.exhibitRepository.remove(exhibit);
   }
 }

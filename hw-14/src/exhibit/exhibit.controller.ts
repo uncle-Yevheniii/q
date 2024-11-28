@@ -11,6 +11,8 @@ import {
   UseGuards,
   UseInterceptors,
   NotFoundException,
+  Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ExhibitService } from './exhibit.service';
 import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
@@ -92,7 +94,11 @@ export class ExhibitController {
     const user = req.user;
     if (!user) throw new BadRequestException('Unauthorized');
 
-    const cloudPhoto = await this.exhibitService.uploadImageBuffer(file.buffer, file.fieldname);
+    const cloudPhoto = await this.exhibitService.uploadImageBuffer(
+      file.buffer,
+      file.originalname,
+      user['id'],
+    );
 
     const exhibit = await this.exhibitService.createExhibit({
       userID: user['id'],
@@ -120,5 +126,28 @@ export class ExhibitController {
     const transformedData = plainToInstance(Exhibit, data, { excludeExtraneousValues: true });
 
     return { data: transformedData, total };
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth('access - token')
+  @Delete('/:id')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Delete exhibit by id' })
+  @ApiParam({ name: 'id', required: true, type: Number })
+  @ApiResponse({ status: 204, description: 'Deleted exhibit' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Exhibit not found' })
+  async deleteExhibitById(@Param() parm: ExhibitParamDto, @Req() req: Request) {
+    if (!parm.id) throw new BadRequestException('You must provide either id');
+
+    const user = req.user;
+    if (!user) throw new BadRequestException('Unauthorized');
+
+    const exhibit = await this.exhibitService.getExhibitById(parm.id);
+    if (!exhibit) throw new NotFoundException('Exhibit not found');
+    if (exhibit.userID !== user['id']) throw new BadRequestException('Unauthorized');
+
+    await this.exhibitService.deleteExhibitById(exhibit);
   }
 }
