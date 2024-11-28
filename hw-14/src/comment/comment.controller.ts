@@ -6,10 +6,11 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/strategy/jwt.guard';
 import { Request } from 'express';
 import { ExhibitService } from '../exhibit/exhibit.service';
@@ -18,6 +19,7 @@ import { CommentBodyDto } from './dto/commentBody.dto';
 import { CommentService } from './comment.service';
 import { plainToInstance } from 'class-transformer';
 import { Comment } from './Comment.entity';
+import { CommentQueryDto } from './dto/commentQuery.dto';
 
 @Controller('/exhibit/:id/comment')
 export class CommentController {
@@ -44,15 +46,28 @@ export class CommentController {
   }
 
   @Get('/')
-  async getComments(@Param() parm: ExhibitParamDto) {
+  @ApiOperation({ summary: 'Get all comments current exhibit with query params' })
+  @ApiParam({ name: 'id', required: true, type: Number })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ status: 200, description: 'Return exhibit list' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  async getComments(@Query() commentQuery: CommentQueryDto, @Param() parm: ExhibitParamDto) {
+    if (!commentQuery.page) commentQuery.page = 1;
+    if (!commentQuery.limit) commentQuery.limit = 5;
     if (!parm['id']) throw new BadRequestException('You must provide either id');
 
     const exhibit = await this.exhibitService.getExhibitById(parm.id);
     if (!exhibit) throw new NotFoundException('Exhibit not found');
 
-    const { data, total } = await this.commentService.getComments(exhibit['id']);
+    const { data, total } = await this.commentService.getComments(commentQuery, exhibit['id']);
     const transformedData = plainToInstance(Comment, data, { excludeExtraneousValues: true });
 
-    return { data: transformedData, total };
+    return {
+      data: transformedData,
+      page: commentQuery.page,
+      lastPage: Math.ceil(total / commentQuery.limit),
+      total,
+    };
   }
 }

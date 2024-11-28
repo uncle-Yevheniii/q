@@ -33,6 +33,7 @@ import { plainToInstance } from 'class-transformer';
 import { Exhibit } from './Exhibit.entity';
 import { ExhibitBodyDto } from './dto/exhibit.dto';
 import { ExhibitParamDto } from './dto/exhibitParam.dto';
+import { last } from 'rxjs';
 
 @Controller('exhibit')
 export class ExhibitController {
@@ -45,10 +46,18 @@ export class ExhibitController {
   @ApiResponse({ status: 200, description: 'Return exhibit list' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   async getExhibits(@Query() exhibitQuery: ExhibitQueryDto) {
+    if (!exhibitQuery.page) exhibitQuery.page = 1;
+    if (!exhibitQuery.limit) exhibitQuery.limit = 5;
+
     const { data, total } = await this.exhibitService.getExhibits(exhibitQuery);
     const transformedData = plainToInstance(Exhibit, data, { excludeExtraneousValues: true });
 
-    return { data: transformedData, total };
+    return {
+      data: transformedData,
+      page: exhibitQuery.page,
+      lastPage: Math.ceil(total / exhibitQuery.limit),
+      total,
+    };
   }
 
   @Get('/post/:id')
@@ -119,13 +128,21 @@ export class ExhibitController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Get('/my')
   async getMyExhibits(@Query() exhibitQuery: ExhibitQueryDto, @Req() req: Request) {
+    if (!exhibitQuery.page) exhibitQuery.page = 1;
+    if (!exhibitQuery.limit) exhibitQuery.limit = 5;
+
     const user = req.user;
     if (!user) throw new BadRequestException('Unauthorized');
 
     const { data, total } = await this.exhibitService.getExhibitByUserId(exhibitQuery, user['id']);
     const transformedData = plainToInstance(Exhibit, data, { excludeExtraneousValues: true });
 
-    return { data: transformedData, total };
+    return {
+      data: transformedData,
+      page: exhibitQuery.page,
+      lastPage: Math.ceil(total / exhibitQuery.limit),
+      total,
+    };
   }
 
   @UseGuards(JwtGuard)
