@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/User.entity';
 import { Exhibit } from './Exhibit.entity';
 import { ConfigModule } from '@nestjs/config';
+import { Comment } from '../comment/Comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exhibit, User]), ConfigModule],
+  imports: [TypeOrmModule.forFeature([Exhibit, User, Comment]), ConfigModule],
   controllers: [ExhibitController],
   providers: [ExhibitService],
+  exports: [ExhibitService],
 })
 export class ExhibitModule {}

@@ -76,6 +76,7 @@ export class ExhibitService {
 
   async getExhibitByUserId(exhibitQuery: ExhibitQueryDto, userID: number) {
     const { limit = 5, page = 1 } = exhibitQuery;
+
     const [data, total] = await this.exhibitRepository.findAndCount({
       where: { userID },
       skip: limit * (page - 1),

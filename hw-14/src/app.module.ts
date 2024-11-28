@@ -9,6 +9,7 @@ import { Exhibit } from './exhibit/Exhibit.entity';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './auth/strategy/jwt.strategy';
 import { CommentModule } from './comment/comment.module';
+import { Comment } from './comment/Comment.entity';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { CommentModule } from './comment/comment.module';
         username: configService.get<string>('DB_USERNAME') || 'yevheniii',
         password: configService.get<string>('DB_PASSWORD') || 'qwerty12345',
         database: configService.get<string>('DB_NAME') || 'nest_exhibitblog',
-        entities: [User, Exhibit],
+        entities: [User, Exhibit, Comment],
         synchronize: false,
       }),
     }),
