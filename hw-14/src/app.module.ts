@@ -8,6 +8,7 @@ import { ExhibitModule } from './exhibit/exhibit.module';
 import { Exhibit } from './exhibit/Exhibit.entity';
 import { AuthModule } from './auth/auth.module';
 import { JwtStrategy } from './auth/strategy/jwt.strategy';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { JwtStrategy } from './auth/strategy/jwt.strategy';
     AuthModule,
     UserModule,
     ExhibitModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [JwtStrategy],

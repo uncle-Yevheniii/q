@@ -1,6 +1,7 @@
 import { Expose } from 'class-transformer';
 import { User } from '../user/User.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Comment } from '../comment/Comment.entity';
 
 @Entity('exhibit')
 export class Exhibit {
@@ -31,4 +32,8 @@ export class Exhibit {
   @Expose()
   @Column()
   userID: number;
+
+  @Expose()
+  @OneToMany(() => Comment, (comment) => comment.exhibitInfo, { cascade: true })
+  comment: Array<Comment>;
 }
