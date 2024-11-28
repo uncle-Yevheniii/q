@@ -1,11 +1,11 @@
-import * as argon from 'argon2';
-import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { AuthenticationDto } from './dto';
-import { User } from '../user/User.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../user/User.entity';
+import { AuthenticationDto } from './dto';
+import { JwtService } from '@nestjs/jwt';
+import { Repository } from 'typeorm';
+import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
@@ -53,7 +53,7 @@ export class AuthService {
    * Creates a new user with the provided authentication data.
    *
    * @param {AuthenticationDto} data - The authentication data for the new user.
-   * @returns {Promise<User>} The created user.
+   * @returns {Promise<User | null>} The created user.
    * @throws {BadRequestException} If a user with the provided username already exists.
    */
   async createUser(data: AuthenticationDto): Promise<User | null> {

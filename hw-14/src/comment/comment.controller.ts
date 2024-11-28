@@ -30,6 +30,7 @@ export class CommentController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access - token')
+  @ApiOperation({ summary: 'Create comment current exhibit' })
   @ApiResponse({ status: 201, description: 'Return created exhibit comment' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
