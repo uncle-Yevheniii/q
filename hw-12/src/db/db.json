@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "name": "John"
+  },
+  {
+    "id": 2,
+    "name": "John"
+  },
+  {
+    "id": 4,
+    "name": "Bobik"
+  },
+  {
+    "id": 5,
+    "name": "Bobik"
+  },
+  {
+    "id": 6,
+    "name": "Bobik"
+  },
+  {
+    "id": 7,
+    "name": "Bobik"
+  },
+  {
+    "id": 8,
+    "name": "Bobik"
+  },
+  {
+    "id": 9,
+    "name": "Bobik"
+  },
+  {
+    "id": 10,
+    "name": "Bobik"
+  },
+  {
+    "id": 11,
+    "name": "John"
+  },
+  {
+    "id": 12,
+    "name": "John"
+  },
+  {
+    "id": 12,
+    "name": "BoB",
+    "pass": 123
+  },
+  {
+    "id": 13,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  },
+  {
+    "id": 14,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  },
+  {
+    "id": 15,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  },
+  {
+    "id": 16,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  },
+  {
+    "id": 17,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  },
+  {
+    "id": 18,
+    "name": "BoB",
+    "pass": 123,
+    "active": true
+  }
+]
