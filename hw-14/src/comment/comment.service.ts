@@ -12,13 +12,24 @@ export class CommentService {
     private readonly exhibitService: ExhibitService,
   ) {}
 
+  /**
+   * Retrieves a comment by its ID.
+   *
+   * @param {number} commentID - The ID of the comment to retrieve.
+   * @returns {Promise<Comment | null>} A promise that resolves to the comment if found, or null if not found.
+   */
   async getCommentById(commentID: number): Promise<Comment | null> {
     return await this.commentRepository.findOne({ where: { id: commentID } });
   }
 
+  /**
+   * Creates a new comment for a given exhibit.
+   *
+   * @param exhibitID - The ID of the exhibit to which the comment belongs.
+   * @param comment - The content of the comment to be created.
+   * @returns {Promise<Comment | null>} A promise that resolves to the created Comment object, or null if the creation fails.
+   */
   async createComment(exhibitID: number, comment: string): Promise<Comment | null> {
-    console.log('exhibitID:', exhibitID, typeof exhibitID);
-
     await this.exhibitService.updateExhibitCommentIncrement(exhibitID);
     return await this.commentRepository.save({ exhibitID, comment });
   }
@@ -45,6 +56,13 @@ export class CommentService {
     return { data, total };
   }
 
+  /**
+   * Deletes a comment and updates the exhibit's comment count.
+   *
+   * @param {Comment} comment - The comment to be deleted.
+   * @param {number} exhibitID - The ID of the exhibit associated with the comment.
+   * @returns {Promise<void>} - A promise that resolves when the comment is deleted and the exhibit's comment count is decremented.
+   */
   async deleteComment(comment: Comment, exhibitID: number): Promise<void> {
     await this.exhibitService.updateExhibitCommentDecrement(exhibitID);
     await this.commentRepository.remove(comment);

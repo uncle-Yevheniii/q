@@ -16,7 +16,10 @@ export class Comment {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @ManyToOne(() => Exhibit, (exhibit) => exhibit.comment, { eager: true })
+  @ManyToOne(() => Exhibit, (exhibit) => exhibit.comment, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'exhibitID' })
   exhibitInfo: Exhibit;
 

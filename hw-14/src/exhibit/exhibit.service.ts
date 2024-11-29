@@ -152,11 +152,22 @@ export class ExhibitService {
     await this.exhibitRepository.remove(exhibit);
   }
 
+  /**
+   * Increments the comment count of an exhibit by 1.
+   *
+   * @param exhibitID - The ID of the exhibit to update.
+   * @returns {Promise<void>} A promise that resolves when the update is complete.
+   */
   async updateExhibitCommentIncrement(exhibitID: number): Promise<void> {
-    console.log('exhibitID:', exhibitID, typeof exhibitID);
-
     await this.exhibitRepository.increment({ id: exhibitID }, 'commentCount', 1);
   }
+
+  /**
+   * Decrements the comment count of an exhibit by 1.
+   *
+   * @param exhibitID - The ID of the exhibit whose comment count is to be decremented.
+   * @returns {Promise<void>} A promise that resolves when the operation is complete.
+   */
   async updateExhibitCommentDecrement(exhibitID: number): Promise<void> {
     await this.exhibitRepository.decrement({ id: exhibitID }, 'commentCount', 1);
   }

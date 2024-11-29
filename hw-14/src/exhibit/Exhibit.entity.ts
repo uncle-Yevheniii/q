@@ -33,7 +33,10 @@ export class Exhibit {
   userID: number;
 
   @Expose()
-  @OneToMany(() => Comment, (comment) => comment.exhibitInfo, { cascade: true })
+  @OneToMany(() => Comment, (comment) => comment.exhibitInfo, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   comment: Array<Comment>;
 
   @Expose()
