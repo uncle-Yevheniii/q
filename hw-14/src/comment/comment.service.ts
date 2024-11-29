@@ -1,6 +1,6 @@
 import { CommentQueryDto } from './dto/commentQuery.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Comment } from './Comment.entity';
 import { Repository } from 'typeorm';
 import { ExhibitService } from '../exhibit/exhibit.service';
@@ -11,6 +11,10 @@ export class CommentService {
     @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
     private readonly exhibitService: ExhibitService,
   ) {}
+
+  async getCommentById(commentID: number): Promise<Comment | null> {
+    return await this.commentRepository.findOne({ where: { id: commentID } });
+  }
 
   async createComment(exhibitID: number, comment: string): Promise<Comment | null> {
     console.log('exhibitID:', exhibitID, typeof exhibitID);
@@ -39,5 +43,10 @@ export class CommentService {
       order: { createdAt: 'DESC' },
     });
     return { data, total };
+  }
+
+  async deleteComment(comment: Comment, exhibitID: number): Promise<void> {
+    await this.exhibitService.updateExhibitCommentDecrement(exhibitID);
+    await this.commentRepository.remove(comment);
   }
 }

@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Post,
@@ -84,8 +85,14 @@ export class CommentController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access - token')
+  @HttpCode(204)
   @Delete('/:commentID')
   async deleteComment(@Param() parm: CommentParamDto) {
     if (!parm) throw new BadRequestException('You must provide either id');
+
+    const comment = await this.commentService.getCommentById(parm['commentID']);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    await this.commentService.deleteComment(comment, parm['exhibitID']);
   }
 }
