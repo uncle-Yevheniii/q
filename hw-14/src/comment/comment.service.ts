@@ -3,19 +3,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Comment } from './Comment.entity';
 import { Repository } from 'typeorm';
+import { ExhibitService } from '../exhibit/exhibit.service';
 
 @Injectable()
 export class CommentService {
-  constructor(@InjectRepository(Comment) private readonly commentRepository: Repository<Comment>) {}
+  constructor(
+    @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
+    private readonly exhibitService: ExhibitService,
+  ) {}
 
-  /**
-   * Creates a new comment for a given exhibit.
-   *
-   * @param exhibitID - The ID of the exhibit to which the comment belongs.
-   * @param comment - The content of the comment to be created.
-   * @returns {Promise<Comment | null>} A promise that resolves to the saved comment object.
-   */
   async createComment(exhibitID: number, comment: string): Promise<Comment | null> {
+    console.log('exhibitID:', exhibitID, typeof exhibitID);
+
+    await this.exhibitService.updateExhibitCommentIncrement(exhibitID);
     return await this.commentRepository.save({ exhibitID, comment });
   }
 

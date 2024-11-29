@@ -1,6 +1,6 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Exhibit } from '../exhibit/Exhibit.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Expose } from 'class-transformer';
 
 @Entity('comment')
 export class Comment {

@@ -151,4 +151,13 @@ export class ExhibitService {
 
     await this.exhibitRepository.remove(exhibit);
   }
+
+  async updateExhibitCommentIncrement(exhibitID: number): Promise<void> {
+    console.log('exhibitID:', exhibitID, typeof exhibitID);
+
+    await this.exhibitRepository.increment({ id: exhibitID }, 'commentCount', 1);
+  }
+  async updateExhibitCommentDecrement(exhibitID: number): Promise<void> {
+    await this.exhibitRepository.decrement({ id: exhibitID }, 'commentCount', 1);
+  }
 }

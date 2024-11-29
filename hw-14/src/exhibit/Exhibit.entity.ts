@@ -29,11 +29,14 @@ export class Exhibit {
   @JoinColumn({ name: 'userID' })
   userInfo: User;
 
-  @Expose()
   @Column()
   userID: number;
 
   @Expose()
   @OneToMany(() => Comment, (comment) => comment.exhibitInfo, { cascade: true })
   comment: Array<Comment>;
+
+  @Expose()
+  @Column({ default: 0 })
+  commentCount: number;
 }

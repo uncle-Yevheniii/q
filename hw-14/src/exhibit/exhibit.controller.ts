@@ -60,16 +60,16 @@ export class ExhibitController {
     };
   }
 
-  @Get('/post/:id')
+  @Get('/post/:exhibitID')
   @ApiOperation({ summary: 'Get exhibit by id' })
-  @ApiParam({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'exhibitID', required: true, type: Number })
   @ApiResponse({ status: 200, description: 'Return exhibit' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 404, description: 'Exhibit not found' })
   async getExhibitById(@Param() parm: ExhibitParamDto) {
-    if (!parm.id) throw new BadRequestException('You must provide either id');
+    if (!parm['exhibitID']) throw new BadRequestException('You must provide either id');
 
-    const exhibit = await this.exhibitService.getExhibitById(parm.id);
+    const exhibit = await this.exhibitService.getExhibitById(parm['exhibitID']);
     if (!exhibit) throw new NotFoundException('Exhibit not found');
 
     return plainToInstance(Exhibit, exhibit, { excludeExtraneousValues: true });
@@ -147,21 +147,21 @@ export class ExhibitController {
 
   @UseGuards(JwtGuard)
   @ApiBearerAuth('access - token')
-  @Delete('/:id')
+  @Delete('/:exhibitID')
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete exhibit by id' })
-  @ApiParam({ name: 'id', required: true, type: Number })
+  @ApiParam({ name: 'exhibitID', required: true, type: Number })
   @ApiResponse({ status: 204, description: 'Deleted exhibit' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Exhibit not found' })
   async deleteExhibitById(@Param() parm: ExhibitParamDto, @Req() req: Request) {
-    if (!parm.id) throw new BadRequestException('You must provide either id');
+    if (!parm['exhibitID']) throw new BadRequestException('You must provide either id');
 
     const user = req.user;
     if (!user) throw new BadRequestException('Unauthorized');
 
-    const exhibit = await this.exhibitService.getExhibitById(parm.id);
+    const exhibit = await this.exhibitService.getExhibitById(parm['exhibitID']);
     if (!exhibit) throw new NotFoundException('Exhibit not found');
     if (exhibit.userID !== user['id']) throw new BadRequestException('Unauthorized');
 
