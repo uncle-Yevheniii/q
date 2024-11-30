@@ -1,43 +1,45 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  Req,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-  NotFoundException,
-  Delete,
-  HttpCode,
-} from '@nestjs/common';
-import { ExhibitService } from './exhibit.service';
-import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { WebsocketGateway } from '../websocket/websocket.gateway';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as multer from 'multer';
-import { Request } from 'express';
+import { ExhibitParamDto } from './dto/exhibitParam.dto';
+import { ExhibitQueryDto } from './dto/exhibitQuery.dto';
 import { JwtGuard } from '../auth/strategy/jwt.guard';
 import { plainToInstance } from 'class-transformer';
-import { Exhibit } from './Exhibit.entity';
+import { ExhibitService } from './exhibit.service';
 import { ExhibitBodyDto } from './dto/exhibit.dto';
-import { ExhibitParamDto } from './dto/exhibitParam.dto';
-import { last } from 'rxjs';
-
+import { Exhibit } from './Exhibit.entity';
+import { Request } from 'express';
+import * as multer from 'multer';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiConsumes,
+  ApiParam,
+  ApiQuery,
+  ApiBody,
+} from '@nestjs/swagger';
+import {
+  BadRequestException,
+  NotFoundException,
+  UseInterceptors,
+  UploadedFile,
+  Controller,
+  UseGuards,
+  HttpCode,
+  Delete,
+  Param,
+  Query,
+  Post,
+  Body,
+  Get,
+  Req,
+} from '@nestjs/common';
 @Controller('exhibit')
 export class ExhibitController {
-  constructor(private readonly exhibitService: ExhibitService) {}
+  constructor(
+    private readonly websocketGateway: WebsocketGateway,
+    private readonly exhibitService: ExhibitService,
+  ) {}
 
   @Get('/')
   @ApiOperation({ summary: 'Get all users exhibit with query params' })
@@ -111,10 +113,17 @@ export class ExhibitController {
 
     const exhibit = await this.exhibitService.createExhibit({
       userID: user['id'],
+      userName: user['username'],
       imagePublicId: cloudPhoto.public_id,
       imageUrl: cloudPhoto.secure_url,
       description: data.description,
     });
+
+    await this.websocketGateway.sendNotification({
+      msg: `New exhibit created: ${exhibit.description}`,
+      user: user['username'],
+    });
+
     return plainToInstance(Exhibit, exhibit, { excludeExtraneousValues: true });
   }
 

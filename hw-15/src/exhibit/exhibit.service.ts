@@ -85,10 +85,11 @@ export class ExhibitService {
   }
 
   /**
-   * Creates a new exhibit.
+   * Creates a new exhibit and saves it to the repository.
+   * Sends a notification through the websocket gateway upon successful creation.
    *
-   * @param {ExhibitCreateDto} data - The data to create the exhibit with.
-   * @returns {Promise<Exhibit | null>} The created exhibit.
+   * @param {ExhibitCreateDto} data - The data transfer object containing exhibit creation details.
+   * @returns {Promise<Exhibit | null>} - A promise that resolves to the created exhibit or null if creation fails.
    */
   async createExhibit(data: ExhibitCreateDto): Promise<Exhibit | null> {
     const exhibit = this.exhibitRepository.create({ ...data });

@@ -9,14 +9,11 @@ import {
   Param,
   Post,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { JwtGuard } from '../auth/strategy/jwt.guard';
-import { Request } from 'express';
 import { ExhibitService } from '../exhibit/exhibit.service';
-import { ExhibitParamDto } from '../exhibit/dto/exhibitParam.dto';
 import { CommentBodyDto } from './dto/commentBody.dto';
 import { CommentService } from './comment.service';
 import { plainToInstance } from 'class-transformer';

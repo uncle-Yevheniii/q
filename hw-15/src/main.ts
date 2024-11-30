@@ -1,14 +1,18 @@
-import * as dotenv from 'dotenv';
-import { AppModule } from './app.module';
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept',
+  });
 
   const config = new DocumentBuilder()
     .setTitle('ExhibitBlog API Documentation')
