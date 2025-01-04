@@ -30,7 +30,7 @@
         "yup": "^1.4.0"
     },
     "scripts": {
-        "start": "set PORT=3006 && react-scripts start",
+        "start": "react-scripts start",
         "build": "react-scripts build",
         "write": "prettier --write src/**/*.ts src/**/*.tsx",
         "test": "react-scripts test",
